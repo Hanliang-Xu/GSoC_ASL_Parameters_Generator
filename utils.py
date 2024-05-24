@@ -146,3 +146,12 @@ def validate_inversion_time(inversion_time: float) -> Tuple[List[str], List[str]
       f"'InversionTime' is less than {[PLACEHOLDER]} or greater than {[PLACEHOLDER]}, which may be unusual")
   """
   return errors, warnings, inversion_time
+
+
+def validate_m0b_method(m0b_method: str) -> Tuple[List[str], List[str], str]:
+  """Validate method for M0b estimation."""
+  errors = []
+  warnings = []
+  if not m0b_method:
+    errors.append("Missing or invalid 'Method for M0b estimation'")
+  return errors, warnings, m0b_method

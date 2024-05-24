@@ -53,7 +53,8 @@ def verify_general_parameters(data: Dict[str, Any]) -> Tuple[List[str], List[str
   return errors, warnings, values
 
 
-def verify_PCASL_required_parameters(data: Dict[str, Any]) -> Tuple[List[str], List[str], Dict[str, Any]]:
+def verify_PCASL_required_parameters(data: Dict[str, Any]) -> Tuple[
+  List[str], List[str], Dict[str, Any]]:
   """Verify PCASL required parameters from the JSON data."""
   errors, warnings = [], []
   values = {}
@@ -87,8 +88,46 @@ def verify_PCASL_required_parameters(data: Dict[str, Any]) -> Tuple[List[str], L
 
   return errors, warnings, values
 
+
+def verify_PASL_required_parameters(data: Dict[str, Any]) -> Tuple[
+  List[str], List[str], Dict[str, Any]]:
+  """Verify PASL required parameters from the JSON data."""
+  errors, warnings = [], []
+  values = {}
+
+  if data.get("ArterialSpinLabelingType") == "PASL":
+    labeling_duration = data.get("LabelingDuration", None)
+
+    if labeling_duration is None:
+      # Extend the errors list with a new error message if labeling duration is not provided
+      errors.append("Required labeling duration parameter for pcasl not provided")
+    else:
+      e, w, v = validate_labeling_duration(labeling_duration)
+      errors.extend(e)
+      warnings.extend(w)
+      values["LabelingDuration"] = v
+
+    post_labeling_delay = data.get("PostLabelingDelay", None)
+
+    if post_labeling_delay is None:
+      # Extend the errors list with a new error message if labeling duration is not provided
+      errors.append("Required post labeling delay parameter for pcasl not provided")
+    else:
+      e, w, v = validate_post_labeling_delay(post_labeling_delay)
+      errors.extend(e)
+      warnings.extend(w)
+      values["PostLabelingDelay"] = v
+
+  else:
+    values["InversionTime"] = "Not applicable"
+    values["BolusCutOffTechnique"] = "Not applicable"
+    values["BolusCutOffTechnique"] = "Not applicable"
+
+  return errors, warnings, values
+
+
 def main():
-  file_path = '../json/sub-Sub103_asl.json'
+  file_path = 'sub-Sub103_asl.json'
   try:
     data = load_json(file_path)
     gen_errors, gen_warnings, gen_values = verify_general_parameters(data)
